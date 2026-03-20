@@ -24,11 +24,11 @@ import {
 export type WorkflowId = "home" | "refill" | "otc" | "orders" | "billing" | "account" | "wrapup";
 
 const WORKFLOWS = [
-  { id: "refill" as const, label: "Refill & Rx", icon: Pill, description: "Refill, auto-refill, transfer, new Rx", volume: "26%" },
-  { id: "otc" as const, label: "OTC & Wellness", icon: ShoppingBag, description: "Product search, balance, catalog", volume: "26%" },
-  { id: "orders" as const, label: "Orders & Delivery", icon: Truck, description: "Track, ETA, expedite, cancel", volume: "15%" },
-  { id: "billing" as const, label: "Billing & Payments", icon: CreditCard, description: "Payment, balance, copay, plan", volume: "13%" },
-  { id: "account" as const, label: "Account", icon: UserCog, description: "Profile, address, preferences", volume: "6%" },
+  { id: "refill" as const, label: "Refill & Rx", icon: Pill, description: "Refill, auto-refill, transfer, new Rx" },
+  { id: "otc" as const, label: "OTC & Wellness", icon: ShoppingBag, description: "Product search, balance, catalog" },
+  { id: "orders" as const, label: "Orders & Delivery", icon: Truck, description: "Track, ETA, expedite, cancel" },
+  { id: "billing" as const, label: "Billing & Payments", icon: CreditCard, description: "Payment, balance, copay, plan" },
+  { id: "account" as const, label: "Account", icon: UserCog, description: "Profile, address, preferences" },
 ];
 
 export default function Home() {

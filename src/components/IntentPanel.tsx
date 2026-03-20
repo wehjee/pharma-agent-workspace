@@ -9,7 +9,6 @@ interface Workflow {
   label: string;
   icon: LucideIcon;
   description: string;
-  volume: string;
 }
 
 interface Props {
@@ -69,9 +68,6 @@ export function IntentPanel({ workflows, onSelect, patient }: Props) {
                 <p className="font-medium text-sm">{w.label}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">{w.description}</p>
               </div>
-              <span className="absolute top-3 right-3 text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
-                {w.volume}
-              </span>
             </button>
           );
         })}
