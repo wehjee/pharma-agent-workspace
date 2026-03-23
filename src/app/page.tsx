@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef } from "react";
 import { IncomingCall } from "@/components/IncomingCall";
+import { ProjectBackground } from "@/components/ProjectBackground";
 import { VerificationGate } from "@/components/VerificationGate";
 import { PatientBanner } from "@/components/PatientBanner";
 import { IntentPanel } from "@/components/IntentPanel";
@@ -138,6 +139,7 @@ export default function Home() {
           onAccept={handleAcceptCall}
           onTransfer={() => {}}
         />
+        <ProjectBackground />
       </div>
     );
   }
