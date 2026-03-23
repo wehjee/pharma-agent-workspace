@@ -99,12 +99,6 @@ export function IncomingCall({ ivrContext, onAccept, onTransfer }: Props) {
                 IVR Pre-Screen
               </p>
               <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm">
-                  <span className="text-muted-foreground">Phone tree path:</span>
-                  <span className="font-medium font-mono text-xs bg-muted px-2 py-0.5 rounded">
-                    {ivrContext.ivrSelection}
-                  </span>
-                </div>
                 {intent && (
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-muted-foreground">Detected intent:</span>
