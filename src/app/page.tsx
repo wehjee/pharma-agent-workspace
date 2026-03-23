@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { IncomingCall } from "@/components/IncomingCall";
+import { VerificationGate } from "@/components/VerificationGate";
 import { PatientBanner } from "@/components/PatientBanner";
 import { IntentPanel } from "@/components/IntentPanel";
 import { RefillWorkflow } from "@/components/RefillWorkflow";
@@ -12,7 +14,7 @@ import { TranscriptSidebar } from "@/components/TranscriptSidebar";
 import { WrapUp } from "@/components/WrapUp";
 import { QuickActions } from "@/components/QuickActions";
 import { TopBar } from "@/components/TopBar";
-import { mockPatient, type Patient } from "@/data/mock";
+import { mockIVRContext, mockPatientDB, type Patient } from "@/data/mock";
 import {
   Pill,
   ShoppingBag,
@@ -21,6 +23,7 @@ import {
   UserCog,
 } from "lucide-react";
 
+export type CallPhase = "incoming" | "verification" | "active";
 export type WorkflowId = "home" | "refill" | "otc" | "orders" | "billing" | "account" | "wrapup";
 
 const WORKFLOWS = [
@@ -32,12 +35,26 @@ const WORKFLOWS = [
 ];
 
 export default function Home() {
+  // Call phase: incoming → verification → active
+  const [callPhase, setCallPhase] = useState<CallPhase>("incoming");
+  const [patient, setPatient] = useState<Patient | null>(null);
+
   const [activeWorkflow, setActiveWorkflow] = useState<WorkflowId>("home");
-  const [patient] = useState<Patient>(mockPatient);
   const [verified, setVerified] = useState({ name: false, dob: false, address: false });
   const [showTranscript, setShowTranscript] = useState(true);
-  const [callActive, setCallActive] = useState(true);
+  const [callActive, setCallActive] = useState(false);
   const [callDuration, setCallDuration] = useState(0);
+
+  const handleAcceptCall = useCallback(() => {
+    setCallPhase("verification");
+    setCallActive(true);
+  }, []);
+
+  const handleVerified = useCallback((verifiedPatient: Patient) => {
+    setPatient(verifiedPatient);
+    setVerified({ name: true, dob: true, address: true });
+    setCallPhase("active");
+  }, []);
 
   const handleVerify = useCallback((field: "name" | "dob" | "address") => {
     setVerified((prev) => ({ ...prev, [field]: true }));
@@ -46,6 +63,7 @@ export default function Home() {
   const allVerified = verified.name && verified.dob && verified.address;
 
   const renderWorkflow = () => {
+    if (!patient) return null;
     switch (activeWorkflow) {
       case "refill":
         return <RefillWorkflow patient={patient} onComplete={() => setActiveWorkflow("wrapup")} />;
@@ -70,6 +88,55 @@ export default function Home() {
     }
   };
 
+  // ─── Incoming call screen ───
+  if (callPhase === "incoming") {
+    return (
+      <div className="flex flex-col h-screen overflow-hidden">
+        <TopBar
+          callActive={false}
+          callDuration={0}
+          setCallDuration={() => {}}
+          onEndCall={() => {}}
+          onToggleTranscript={() => setShowTranscript(!showTranscript)}
+          showTranscript={showTranscript}
+        />
+        <IncomingCall
+          ivrContext={mockIVRContext}
+          onAccept={handleAcceptCall}
+          onTransfer={() => {}}
+        />
+      </div>
+    );
+  }
+
+  // ─── Verification gate ───
+  if (callPhase === "verification") {
+    return (
+      <div className="flex flex-col h-screen overflow-hidden">
+        <TopBar
+          callActive={callActive}
+          callDuration={callDuration}
+          setCallDuration={setCallDuration}
+          onEndCall={() => {
+            setCallActive(false);
+            setCallPhase("incoming");
+          }}
+          onToggleTranscript={() => setShowTranscript(!showTranscript)}
+          showTranscript={showTranscript}
+        />
+        <div className="flex flex-1 overflow-hidden">
+          <VerificationGate
+            patients={mockPatientDB}
+            ivrContext={mockIVRContext}
+            onVerified={handleVerified}
+          />
+          {showTranscript && <TranscriptSidebar callActive={callActive} />}
+        </div>
+      </div>
+    );
+  }
+
+  // ─── Active call — full dashboard ───
   return (
     <div className="flex flex-col h-screen overflow-hidden">
       <TopBar
@@ -84,12 +151,14 @@ export default function Home() {
         showTranscript={showTranscript}
       />
 
-      <PatientBanner
-        patient={patient}
-        verified={verified}
-        onVerify={handleVerify}
-        allVerified={allVerified}
-      />
+      {patient && (
+        <PatientBanner
+          patient={patient}
+          verified={verified}
+          onVerify={handleVerify}
+          allVerified={allVerified}
+        />
+      )}
 
       <div className="flex flex-1 overflow-hidden">
         <div className="flex flex-col flex-1 overflow-hidden">
@@ -114,7 +183,7 @@ export default function Home() {
 
           <QuickActions
             onNavigate={(id) => setActiveWorkflow(id)}
-            patient={patient}
+            patient={patient!}
           />
         </div>
 

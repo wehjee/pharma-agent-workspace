@@ -169,6 +169,54 @@ export const otcProducts: OTCProduct[] = [
   { id: "OTC-010", name: "Calcium + D3 600mg (60ct)", category: "Vitamins", price: 9.99, available: false },
 ];
 
+// Additional patients for search/verification demo
+export const mockPatientDB: Patient[] = [
+  mockPatient,
+  {
+    id: "CW-8834722",
+    firstName: "Stephen",
+    lastName: "Walker",
+    dob: "07/22/1955",
+    phone: "(813) 555-0199",
+    memberId: "H9876543210",
+    plan: "Humana Gold Plus",
+    shippingAddress: { street: "100 Palm Ave", city: "Tampa", state: "FL", zip: "33601" },
+    otcBalance: 68.0,
+    otcTotal: 100.0,
+    cardOnFile: { last4: "8832", expiry: "05/27", brand: "Mastercard" },
+    prescriptions: [],
+    orders: [],
+    autoRefills: [],
+    communicationPrefs: { email: true, sms: false, mail: true },
+  },
+  {
+    id: "CW-8834723",
+    firstName: "Stephanie",
+    lastName: "Weiss",
+    dob: "11/03/1962",
+    phone: "(727) 555-0145",
+    memberId: "H5556667777",
+    plan: "Humana Walmart Value Rx",
+    shippingAddress: { street: "222 Oak Blvd", city: "Clearwater", state: "FL", zip: "33755" },
+    otcBalance: 12.5,
+    otcTotal: 50.0,
+    cardOnFile: null,
+    prescriptions: [],
+    orders: [],
+    autoRefills: [],
+    communicationPrefs: { email: false, sms: true, mail: false },
+  },
+];
+
+export const mockIVRContext = {
+  callerNumber: "(941) 555-0173",
+  queueName: "Rx Refill Line",
+  waitTime: 47,
+  ivrSelection: "1 → 2 → 1",
+  ivrIntent: "refill",
+  callerIdMatch: { name: "Stephen Weinrib", memberId: "H1234567890" },
+};
+
 export const mockTranscript: TranscriptEntry[] = [
   { id: 0, speaker: "agent", text: "Thank you for calling CenterWell Pharmacy. My name is Katie. How can I help?", timestamp: "0:00" },
   { id: 1, speaker: "caller", text: "Yes, I want to renew two prescriptions that I have been using all along.", timestamp: "0:05", entities: [{ type: "intent", value: "refill" }] },
