@@ -76,7 +76,7 @@ export function ProjectBackground() {
               <div>
                 <h2 className="text-xl font-semibold tracking-tight">Project Background</h2>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Analysis of 318 questions from 167 CenterWell Pharmacy call conversations
+                  Analysis of 200 evaluation questions from 167 CenterWell Pharmacy call conversations
                 </p>
               </div>
               <button
@@ -92,7 +92,7 @@ export function ProjectBackground() {
               {/* Key metrics */}
               <div className="grid grid-cols-4 gap-3">
                 {[
-                  { icon: MessageSquare, label: "Total Questions", value: "318" },
+                  { icon: MessageSquare, label: "Eval Questions", value: "200" },
                   { icon: Phone, label: "Conversations", value: "167" },
                   { icon: Clock, label: "Avg Duration", value: "48.5s" },
                   { icon: Users, label: "Max Duration", value: "6m 48s" },
@@ -195,7 +195,7 @@ export function ProjectBackground() {
               {/* Data source */}
               <div className="px-4 py-3 bg-muted/40 rounded-xl">
                 <p className="text-[11px] text-muted-foreground">
-                  Source: <span className="font-mono">aa_cwpcc_top_200_eval_questions_v0.1_sme.csv</span> — 318 evaluation questions extracted from 167 real CenterWell Pharmacy call center conversations, ranked by frequency and annotated by subject matter experts.
+                  Source: <span className="font-mono">aa_cwpcc_top_200_eval_questions_v0.1_sme.csv</span> — Top 200 evaluation questions extracted from 167 real CenterWell Pharmacy call center conversations, ranked by frequency and annotated by subject matter experts.
                 </p>
               </div>
             </div>
