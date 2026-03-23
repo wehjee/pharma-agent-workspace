@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { mockTranscript, type TranscriptEntry } from "@/data/mock";
+import { useEffect, useRef } from "react";
+import { type TranscriptEntry } from "@/data/mock";
 import { Mic, User, Pill, MapPin, Hash, Calendar, Zap } from "lucide-react";
 
 const entityIcons: Record<string, typeof Pill> = {
@@ -24,35 +24,16 @@ const entityColors: Record<string, string> = {
 
 interface Props {
   callActive: boolean;
+  entries: TranscriptEntry[];
 }
 
-export function TranscriptSidebar({ callActive }: Props) {
-  const [entries, setEntries] = useState<TranscriptEntry[]>([]);
-  const [prompts] = useState([
+export function TranscriptSidebar({ callActive, entries }: Props) {
+  const bottomRef = useRef<HTMLDivElement>(null);
+  const prompts = [
     "Read back address to caller",
     "Confirm DOB",
     "Provide order number",
-  ]);
-  const bottomRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!callActive) {
-      setEntries(mockTranscript);
-      return;
-    }
-
-    let idx = 0;
-    const interval = setInterval(() => {
-      if (idx < mockTranscript.length) {
-        setEntries((prev) => [...prev, mockTranscript[idx]]);
-        idx++;
-      } else {
-        clearInterval(interval);
-      }
-    }, 2500);
-
-    return () => clearInterval(interval);
-  }, [callActive]);
+  ];
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });

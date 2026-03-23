@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { IncomingCall } from "@/components/IncomingCall";
 import { VerificationGate } from "@/components/VerificationGate";
 import { PatientBanner } from "@/components/PatientBanner";
@@ -14,7 +14,7 @@ import { TranscriptSidebar } from "@/components/TranscriptSidebar";
 import { WrapUp } from "@/components/WrapUp";
 import { QuickActions } from "@/components/QuickActions";
 import { TopBar } from "@/components/TopBar";
-import { mockIVRContext, mockPatientDB, type Patient } from "@/data/mock";
+import { mockIVRContext, mockPatientDB, mockTranscript, type Patient, type TranscriptEntry } from "@/data/mock";
 import {
   Pill,
   ShoppingBag,
@@ -44,6 +44,27 @@ export default function Home() {
   const [showTranscript, setShowTranscript] = useState(true);
   const [callActive, setCallActive] = useState(false);
   const [callDuration, setCallDuration] = useState(0);
+
+  // Transcript state lives here so it persists across phases
+  const [transcriptEntries, setTranscriptEntries] = useState<TranscriptEntry[]>([]);
+  const transcriptIdxRef = useRef(0);
+
+  // Stream transcript entries while call is active
+  useEffect(() => {
+    if (!callActive) return;
+
+    const interval = setInterval(() => {
+      if (transcriptIdxRef.current < mockTranscript.length) {
+        const idx = transcriptIdxRef.current;
+        setTranscriptEntries((prev) => [...prev, mockTranscript[idx]]);
+        transcriptIdxRef.current++;
+      } else {
+        clearInterval(interval);
+      }
+    }, 2500);
+
+    return () => clearInterval(interval);
+  }, [callActive]);
 
   const handleAcceptCall = useCallback(() => {
     setCallPhase("verification");
@@ -130,7 +151,7 @@ export default function Home() {
             ivrContext={mockIVRContext}
             onVerified={handleVerified}
           />
-          {showTranscript && <TranscriptSidebar callActive={callActive} />}
+          {showTranscript && <TranscriptSidebar callActive={callActive} entries={transcriptEntries} />}
         </div>
       </div>
     );
@@ -188,7 +209,7 @@ export default function Home() {
         </div>
 
         {showTranscript && (
-          <TranscriptSidebar callActive={callActive} />
+          <TranscriptSidebar callActive={callActive} entries={transcriptEntries} />
         )}
       </div>
     </div>
