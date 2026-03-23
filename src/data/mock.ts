@@ -21,12 +21,27 @@ export interface Patient {
   communicationPrefs: { email: boolean; sms: boolean; mail: boolean };
 }
 
+export interface Prescriber {
+  id: string;
+  name: string;
+  title: string;
+  specialty: string;
+  npi: string;
+  phone: string;
+  fax: string;
+  practice: string;
+  address: string;
+  lastRxDate: string;
+  rxCount: number;
+}
+
 export interface Prescription {
   rxNumber: string;
   name: string;
   dosage: string;
   supply: number;
   prescriber: string;
+  prescriberId: string;
   prescriberFax: string;
   copay: number;
   lastFilled: string;
@@ -61,6 +76,48 @@ export interface TranscriptEntry {
   entities?: { type: string; value: string }[];
 }
 
+export const prescribersDB: Record<string, Prescriber> = {
+  "PRE-001": {
+    id: "PRE-001",
+    name: "Dr. Edward Fine",
+    title: "MD",
+    specialty: "Internal Medicine",
+    npi: "1234567890",
+    phone: "(941) 555-0200",
+    fax: "(941) 555-0200",
+    practice: "Sarasota Internal Medicine Associates",
+    address: "1800 Main St, Suite 200, Sarasota, FL 34236",
+    lastRxDate: "2025-12-18",
+    rxCount: 3,
+  },
+  "PRE-002": {
+    id: "PRE-002",
+    name: "Iliam Clavello, PA",
+    title: "PA-C",
+    specialty: "Family Medicine",
+    npi: "9876543210",
+    phone: "(941) 555-0201",
+    fax: "(941) 555-0201",
+    practice: "Gulf Coast Family Health",
+    address: "450 Bee Ridge Rd, Suite 110, Sarasota, FL 34233",
+    lastRxDate: "2025-12-18",
+    rxCount: 1,
+  },
+  "PRE-003": {
+    id: "PRE-003",
+    name: "Dr. Paul Lawrence",
+    title: "MD",
+    specialty: "Cardiology",
+    npi: "5556667778",
+    phone: "(941) 555-0202",
+    fax: "(941) 555-0202",
+    practice: "Heart & Vascular Institute of Sarasota",
+    address: "2415 University Pkwy, Suite 300, Sarasota, FL 34243",
+    lastRxDate: "2026-01-15",
+    rxCount: 2,
+  },
+};
+
 export const mockPatient: Patient = {
   id: "CW-8834721",
   firstName: "Stephen",
@@ -85,6 +142,7 @@ export const mockPatient: Patient = {
       dosage: "20mg",
       supply: 90,
       prescriber: "Dr. Edward Fine",
+      prescriberId: "PRE-001",
       prescriberFax: "(941) 555-0200",
       copay: 0,
       lastFilled: "2025-12-18",
@@ -98,6 +156,7 @@ export const mockPatient: Patient = {
       dosage: "30mg",
       supply: 90,
       prescriber: "Iliam Clavello, PA",
+      prescriberId: "PRE-002",
       prescriberFax: "(941) 555-0201",
       copay: 5.0,
       lastFilled: "2025-12-18",
@@ -111,6 +170,7 @@ export const mockPatient: Patient = {
       dosage: "50mg",
       supply: 90,
       prescriber: "Dr. Paul Lawrence",
+      prescriberId: "PRE-003",
       prescriberFax: "(941) 555-0202",
       copay: 0,
       lastFilled: "2025-11-01",
@@ -124,6 +184,7 @@ export const mockPatient: Patient = {
       dosage: "10mg",
       supply: 30,
       prescriber: "Dr. Paul Lawrence",
+      prescriberId: "PRE-003",
       prescriberFax: "(941) 555-0202",
       copay: 3.5,
       lastFilled: "2026-01-15",

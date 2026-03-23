@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import type { Patient, Prescription } from "@/data/mock";
+import type { Patient, Prescription, Prescriber } from "@/data/mock";
 import { Check, ChevronRight, Pill, RotateCcw, ArrowLeftRight, Plus, ToggleLeft, ToggleRight } from "lucide-react";
+import { PrescriberHoverCard } from "./PrescriberHoverCard";
+import { PrescriberDetail } from "./PrescriberDetail";
 
 type Tab = "refill" | "auto" | "transfer" | "new";
 
@@ -16,6 +18,7 @@ export function RefillWorkflow({ patient, onComplete }: Props) {
   const [step, setStep] = useState(0);
   const [selectedRx, setSelectedRx] = useState<string[]>([]);
   const [autoRefillChanges, setAutoRefillChanges] = useState<Record<string, boolean>>({});
+  const [viewingPrescriber, setViewingPrescriber] = useState<Prescriber | null>(null);
 
   const tabs = [
     { id: "refill" as const, label: "Manual Refill", icon: RotateCcw },
@@ -40,6 +43,18 @@ export function RefillWorkflow({ patient, onComplete }: Props) {
 
   const selectedPrescriptions = activeRx.filter((p) => selectedRx.includes(p.rxNumber));
   const totalCopay = selectedPrescriptions.reduce((sum, p) => sum + p.copay, 0);
+
+  // Prescriber detail view
+  if (viewingPrescriber) {
+    const relatedRx = patient.prescriptions.filter((rx) => rx.prescriberId === viewingPrescriber.id);
+    return (
+      <PrescriberDetail
+        prescriber={viewingPrescriber}
+        relatedRx={relatedRx}
+        onBack={() => setViewingPrescriber(null)}
+      />
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -87,6 +102,7 @@ export function RefillWorkflow({ patient, onComplete }: Props) {
                   rx={rx}
                   selected={selectedRx.includes(rx.rxNumber)}
                   onToggle={() => toggleRx(rx.rxNumber)}
+                  onViewPrescriber={(p) => setViewingPrescriber(p)}
                 />
               ))}
               <div className="flex justify-end pt-2">
@@ -120,7 +136,13 @@ export function RefillWorkflow({ patient, onComplete }: Props) {
                           <p className="text-sm font-medium">{rx.name} {rx.dosage}</p>
                           <p className="text-xs text-muted-foreground">{rx.rxNumber}</p>
                         </td>
-                        <td className="px-4 py-3 text-sm">{rx.prescriber}</td>
+                        <td className="px-4 py-3 text-sm">
+                          <PrescriberHoverCard
+                            prescriberId={rx.prescriberId}
+                            prescriberName={rx.prescriber}
+                            onViewDetails={(p) => setViewingPrescriber(p)}
+                          />
+                        </td>
                         <td className="px-4 py-3 text-sm">{rx.supply}-day</td>
                         <td className="px-4 py-3 text-sm text-right font-medium">
                           {rx.copay === 0 ? (
@@ -299,7 +321,7 @@ export function RefillWorkflow({ patient, onComplete }: Props) {
   );
 }
 
-function RxCard({ rx, selected, onToggle }: { rx: Prescription; selected: boolean; onToggle: () => void }) {
+function RxCard({ rx, selected, onToggle, onViewPrescriber }: { rx: Prescription; selected: boolean; onToggle: () => void; onViewPrescriber: (p: Prescriber) => void }) {
   const canRefill = rx.refillsRemaining > 0;
 
   return (
@@ -323,7 +345,14 @@ function RxCard({ rx, selected, onToggle }: { rx: Prescription; selected: boolea
         <Pill className="w-4 h-4 text-primary" />
         <div>
           <p className="text-sm font-medium">{rx.name} {rx.dosage}</p>
-          <p className="text-xs text-muted-foreground">{rx.rxNumber} &middot; {rx.prescriber}</p>
+          <p className="text-xs text-muted-foreground">
+            {rx.rxNumber} ·{" "}
+            <PrescriberHoverCard
+              prescriberId={rx.prescriberId}
+              prescriberName={rx.prescriber}
+              onViewDetails={onViewPrescriber}
+            />
+          </p>
         </div>
       </div>
       <div className="text-right">
