@@ -66,6 +66,17 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [callActive]);
 
+  const handleReset = useCallback(() => {
+    setCallPhase("incoming");
+    setPatient(null);
+    setActiveWorkflow("home");
+    setVerified({ name: false, dob: false, address: false });
+    setCallActive(false);
+    setCallDuration(0);
+    setTranscriptEntries([]);
+    transcriptIdxRef.current = 0;
+  }, []);
+
   const handleAcceptCall = useCallback(() => {
     setCallPhase("verification");
     setCallActive(true);
@@ -120,6 +131,7 @@ export default function Home() {
           onEndCall={() => {}}
           onToggleTranscript={() => setShowTranscript(!showTranscript)}
           showTranscript={showTranscript}
+          onLogoClick={handleReset}
         />
         <IncomingCall
           ivrContext={mockIVRContext}
@@ -144,6 +156,7 @@ export default function Home() {
           }}
           onToggleTranscript={() => setShowTranscript(!showTranscript)}
           showTranscript={showTranscript}
+          onLogoClick={handleReset}
         />
         <div className="flex flex-1 overflow-hidden">
           <VerificationGate
